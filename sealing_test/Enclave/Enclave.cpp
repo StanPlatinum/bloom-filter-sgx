@@ -45,7 +45,8 @@ sgx_status_t unseal_inside(sgx_sealed_data_t *sealed_data, size_t sealed_size)
     return status;
 }
 
-sgx_status_t seal_inside(uint8_t* plaintext, size_t plaintext_len, sgx_sealed_data_t* sealed_data, size_t sealed_size) {
+sgx_status_t seal_inside(uint8_t *plaintext, size_t plaintext_len, sgx_sealed_data_t *sealed_data, size_t sealed_size)
+{
     sgx_status_t status = sgx_seal_data(0, NULL, plaintext_len, plaintext, sealed_size, sealed_data);
     return status;
 }
@@ -56,10 +57,18 @@ void compute_and_seal(void)
     data++;
 
     size_t sealed_size = sizeof(sgx_sealed_data_t) + sizeof(data);
-    uint8_t* sealed_data = (uint8_t*)malloc(sealed_size);
+    uint8_t *sealed_data = (uint8_t *)malloc(sealed_size);
 
-    sgx_status_t status = seal_inside((uint8_t *)&data, sizeof(data), (sgx_sealed_data_t*)sealed_data, sealed_size);
+    sgx_status_t status = seal_inside((uint8_t *)&data, sizeof(data), (sgx_sealed_data_t *)sealed_data, sealed_size);
     send2outside(sealed_data, sealed_size);
 }
 
-
+void compute_and_output(void)
+{
+    data = unsealed_data;
+    data++;
+    char output_data[9];
+    snprintf(output_data, 8, "%d", data);
+    const char *file_name = "test.sam";
+    ocall_print_file((const char *)&output_data, file_name, 0);
+}
