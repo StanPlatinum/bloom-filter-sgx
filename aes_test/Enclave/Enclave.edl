@@ -1,0 +1,18 @@
+enclave {
+    from "sealing.edl" import *;
+    from "aes_gcm.edl" import *;
+
+    trusted {
+        /* define ECALLs here. */
+        public int generate_random_number(void);
+        public void compute_and_seal(void);
+        public void compute_and_output(void);
+    };
+
+    untrusted {
+        /* define OCALLs here. */
+        void ocall_print([in, string]const char* str);
+        void ocall_print_file([in, string] const char *str, [in, string] const char *file, int append);
+        void send2outside([in, size=sealed_size]uint8_t* sealed_data, size_t sealed_size);
+    };
+};
